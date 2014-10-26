@@ -5,16 +5,21 @@ __author__ = 'jessebostic'
 
 # Holds all of the possibly string values for creating random items
 # Integers should be dynamically created with random module upon insertion
-db_values = {"name_adjectives": ["Ugly", "Cheap", "Elegant", "Unique", "Used", "Gorgeous", "Plain", "Barbed", "Smooth"],
-             "shapes": ["Sphere", "Triangle", "Tight Fit", "Square"],
-             "types": ["Butterfly", "Button", "Snap", "Screw On"],
-             "materials": ["Wool", "Polyester", "Plastic", "Bronze", "Sterling Silver", "Glass"],
-             "colors": ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Translucent"],
+db_values = {"name_adjectives": ["Ugly", "Cheap", "Elegant", "Unique", "Used", "Gorgeous", "Plain", "Barbed", "Smooth",
+                                 "Brilliant", "Awesome", "Basic", "Aquatic", "Cool", "Sexy", "Gawdy", "Gorgeous",
+                                 "New",  "Antique", "Steampunk", "Coveted", "Rugged", "Durable", "Quality", "Stylish",
+                                 "Enviable", "Common", "Worn"],
+             "shapes": ["Sphere", "Triangle", "Tight Fit", "Square", "Loose Fit", "Cone", "Mask-ish", "Square", "Misc"],
+             "types": ["Butterfly", "Button", "Snap", "Screw On", "Latch", "Catch", "Decorative"],
+             "materials": ["Wool", "Polyester", "Plastic", "Bronze", "Sterling Silver", "Glass", "Pewter", "Wood",
+                           "Lead", "Diamond", "Plutonium", "Agate", "Cement", "Silk", "Leather", "Paper", "Cotton"],
+             "colors": ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Translucent", "Rainbow", "Chameleon"],
              "boot_mfgs": ["Boot The World", "NoseStyl", "Shnoot", "Bootcetera"],
              "tie_mfgs": ["ThredLite", "RevoSnootion", "OGG", "Spinweel"],
              "clasp_mfgs": ["YKK", "Claspsmith and Sons", "Lockitup", "Stevenson & Kline"],
              "mfgs_cities": [("Tacoma", "WA"), ("San Francisco", "CA"), ("New York", "NY"), ("Salt Lake City", "UT"),
-                             ("Miami", "FL"), ("Dallas", "TX"), ("Tucson", "AZ"), ("St. Paul", "MN")]}
+                             ("Miami", "FL"), ("Dallas", "TX"), ("Tucson", "AZ"), ("St. Paul", "MN"), ("Kiska", "AK"),
+                             ("Portland", "OR"), ("Seattle", "WA"), ("Boise", "ID"), ("Olympia", "WA")]}
 
 # How many items of each type to generate.
 NUM_OF_ITEMS = 15
@@ -55,7 +60,7 @@ for x in range(NUM_OF_ITEMS):
 cur.execute('SELECT ID FROM MFGS WHERE ProductType = "Ties"')
 mfg_ids = cur.fetchall()
 for x in range(NUM_OF_ITEMS):
-    name = random.choice(db_values["name_adjectives"]) + ' ' + random.choice(db_values["name_adjectives"]) + ' ' + "Boot"
+    name = random.choice(db_values["name_adjectives"]) + ' ' + random.choice(db_values["name_adjectives"]) + ' ' + "Tie"
     length =  random.randint(8, 25)
     material = random.choice(db_values["materials"])
     color = random.choice(db_values["colors"])
@@ -68,7 +73,7 @@ for x in range(NUM_OF_ITEMS):
 cur.execute('SELECT ID FROM MFGS WHERE ProductType = "Clasps"')
 mfg_ids = cur.fetchall()
 for x in range(NUM_OF_ITEMS):
-    name = random.choice(db_values["name_adjectives"]) + ' ' + random.choice(db_values["name_adjectives"]) + ' ' + "Boot"
+    name = random.choice(db_values["name_adjectives"]) + ' ' + random.choice(db_values["name_adjectives"]) + ' ' + "Clasp"
     type =  random.choice(db_values["types"])
     material = random.choice(db_values["materials"])
     color = random.choice(db_values["colors"])

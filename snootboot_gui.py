@@ -8,13 +8,13 @@ __author__ = 'nick ames'
 
 class SnootbootGUI:
 
-    FINDER = (['name', 'shape', 'material', 'color', 'manufacturer', 'min price', 'max price', 'find'], #boot
-              ['name', 'length', 'material', 'color', 'manufacturer', 'min price', 'max price', 'find'], #tie
-              ['name', 'type', 'material', 'color', 'manufacturer', 'min price', 'max price', 'find']) #clasp
+    FINDER = (['name', ('shape', query_library.get_boot_shapes), 'material', 'color', 'manufacturer', 'min price', 'max price', 'find', 'boot'], #boot
+              ['name', ('length', query_library.get_tie_lengths), 'material', 'color', 'manufacturer', 'min price', 'max price', 'find', 'tie'], #tie
+              ['name', ('type', query_library.get_clasp_types), 'material', 'color', 'manufacturer', 'min price', 'max price', 'find', 'clasp']) #clasp
 
     def __init__(self):
         self.root = Tk()
-        self.root.attributes("-zoomed", True)
+        #self.root.attributes("-zoomed", True)
 
         self.root.title("Custom Snootboot Marketplace")
         self.root['bg'] = '#656565'
@@ -30,26 +30,20 @@ class SnootbootGUI:
         row = 0
 
         for comp_list in self.FINDER:
+
+            Label(self.frame, text="Find A "+comp_list[-1].title()+": ").grid(row=row, column=0)
+
             text = comp_list[0]
             comp_list[0] = Entry(self.frame)
-            comp_list[0].insert(0, text)
-            comp_list[0].grid(row=row, column=0)
+            comp_list[0].insert(0, text.title())
+            comp_list[0].grid(row=row, column=1)
 
-            text = comp_list[1]
-            comp_list[1] = Entry(self.frame)
-            comp_list[1].insert(END, text)
-            comp_list[1].grid(row=row, column=1)
+            text = comp_list[1][0]
+            options = [list(i)[0] for i in sorted(comp_list[1][1]())]
+            variable = StringVar(self.frame)
+            variable.set(text.title())
+            comp_list[1] = apply(OptionMenu, (self.frame, variable) + tuple(options))
+            comp_list[1].grid(row=row, column=2)
 
             row += 1
 
-        OPTIONS = [
-            "pig",
-            "bunny",
-            "chicken"
-        ]
-
-        variable = StringVar(self.frame)
-        variable.set(OPTIONS[0]) # default value
-
-        w = apply(OptionMenu, (self.frame, variable) + tuple(OPTIONS))
-        w.grid()

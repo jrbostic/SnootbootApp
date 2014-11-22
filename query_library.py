@@ -18,9 +18,12 @@ def close_conn(db, cur):
 def connection(query_func):
     """Decorator takes query function and returns result."""
 
-    def doit():
+    def doit(table=None):
         db, cur = open_conn()
-        cur.execute(query_func())
+        if table is None:
+            cur.execute(query_func())
+        else:
+            cur.execute(query_func(table))
         result = cur.fetchall()
         close_conn(db, cur)
         return result
@@ -40,18 +43,20 @@ def get_clasp_types():
     return "SELECT DISTINCT Type FROM CLASPS"
 
 @connection
-def get_boot_mfgs():
-    return "SELECT DISTINCT MFGS.Name FROM (BOOTS JOIN MFGS ON Mfg = MFGS.ID)"
-
-
-@connection
-def get_tie_mfgs():
-    return "SELECT DISTINCT MFGS.Name FROM (TIES JOIN MFGS ON Mfg = MFGS.ID)"
-
+def get_materials(table):
+    table = table.upper() + 'S'
+    return "SELECT DISTINCT Material FROM " + table
 
 @connection
-def get_clasp_mfgs():
-    return "SELECT DISTINCT MFGS.Name FROM (CLASPS JOIN MFGS ON Mfg = MFGS.ID)"
+def get_colors(table):
+    table = table.upper() + 'S'
+    return "SELECT DISTINCT Color FROM " + table
+
+@connection
+def get_mfgs(table):
+    table = table.upper() + 'S'
+    return "SELECT DISTINCT MFGS.Name FROM ("+table+" JOIN MFGS ON Mfg = MFGS.ID)"
+
 
 
 # EXAMPLE DB CALL W/O DECORATOR

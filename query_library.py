@@ -107,7 +107,7 @@ def action(name, comp_list):
         print(query)
         res = find(query)
         print(res)
-        return
+        return res
 
     # build the statement
     andit = False
@@ -143,7 +143,8 @@ def action(name, comp_list):
         else:
             # error here don't query
             print(min)
-            return
+            return min
+
     if max != "":
         if max != "Invalid input for max price.":
             if andit:
@@ -152,11 +153,11 @@ def action(name, comp_list):
         else:
             # error here don't query
             print(max)
-            return
+            return max
     print(query)
     res = find(query)
     print(res)
-    return
+    return res
 
 @connection
 def find(statement):

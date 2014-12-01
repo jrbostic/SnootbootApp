@@ -1,5 +1,6 @@
 from Tkinter import *
 import query_library
+import tkFont
 
 __author__ = 'jesse bostic'
 __author__ = 'nick ames'
@@ -25,6 +26,47 @@ class SnootbootGUI:
 
         self.frame.pack()
         self.root.mainloop()
+
+    def create_res_window(self, results, table_name):
+
+        def toString(item):
+            the_string = ''
+            for i in [1, 2, 3, 4, 8, 6]:
+                if i==6:
+                    the_string += "$" + str(item[i]) + '   '
+                elif i==2:
+                    if table_name == 'Tie':
+                        the_string += str(item[i]) + '"' + '   '
+                    else:
+                        the_string += str(item[i]) + '   '
+                elif i==8:
+                    the_string += item[i] + " (" + item[10] + ", " + item[11] + ")   "
+                else:
+                    the_string += item[i] + '   '
+            return the_string
+
+        scroll_window = Toplevel(self.frame)
+        scroll_window.geometry("%dx%d%+d%+d" % (500, 200, self.frame.winfo_rootx()+10, self.frame.winfo_rooty()))
+
+        inner_window = Frame(scroll_window)
+        inner_window.pack(fill=BOTH)
+
+        scrollbar = Scrollbar(inner_window, orient=VERTICAL)
+        xscrollbar = Scrollbar(inner_window, orient=HORIZONTAL)
+        self.select_list = Listbox(inner_window, yscrollcommand=scrollbar.set, xscrollcommand=xscrollbar.set,
+                                   font=tkFont.nametofont('TkFixedFont'))
+        scrollbar.config( command = self.select_list.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        xscrollbar.config( command = self.select_list.xview)
+        xscrollbar.pack(side=BOTTOM, fill=X)
+        for item in results:
+            self.select_list.insert(END, toString(item))
+        self.select_list.pack(side=LEFT, fill=BOTH, expand=1)
+
+        #currently destroy window... need to return/set selection
+        Button(scroll_window, text="Select", command=scroll_window.destroy).pack(side=LEFT, expand=1)
+        Button(scroll_window, text="Cancel", command=scroll_window.destroy).pack(side=RIGHT, expand=1)
+
 
     def _create_components(self):
 
@@ -105,6 +147,6 @@ class SnootbootGUI:
             text = comp_list[7]
             comp_list[7] = Button(self.frame, text=text.title(),
                                   command=lambda name=comp_list[-1].title(),
-                                                 clist=comp_list: query_library.action(name, clist))
+                                                 clist=comp_list: self.create_res_window(query_library.action(name, clist), name))
             comp_list[7].grid(row=row, column=4, sticky=N+S+E+W)
             row += 1

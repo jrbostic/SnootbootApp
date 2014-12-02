@@ -13,14 +13,17 @@ class SnootbootGUI:
               ['name', ('length', query_library.get_tie_lengths), 'material', 'color', 'manufacturer', 'min price', 'max price', 'find', 'tie'], #tie
               ['name', ('type', query_library.get_clasp_types), 'material', 'color', 'manufacturer', 'min price', 'max price', 'find', 'clasp']) #clasp
 
+    VAR_LIST = []
+
     def __init__(self):
+
         self.root = Tk()
         self.root.resizable(0, 0)
         #self.root.attributes("-zoomed", True)
 
         self.root.title("Custom Snootboot Marketplace")
         self.root['bg'] = '#656565'
-        self.frame = Frame(self.root)
+        self.frame = Frame(self.root, padx=10, pady=15)
 
         self.results = None
         self.scroll_window = None
@@ -50,7 +53,7 @@ class SnootbootGUI:
             the_string = ''
             for i in [1, 2, 3, 4, 8, 6]:
                 if i==6:
-                    the_string += "$" + str(item[i]) + '   '
+                    the_string += "$" + "%.2f" % item[i] + '   '
                 elif i==2:
                     if cat == 'Ties':
                         the_string += str(item[i]) + '"' + '   '
@@ -82,7 +85,7 @@ class SnootbootGUI:
             tie_price = 0.00 if self._tie_selection is None else self._tie_selection[6]
             clasp_price = 0.00 if self._clasp_selection is None else self._clasp_selection[6]
 
-            self.price_total.set("Total: $" + str(boot_price + tie_price + clasp_price))
+            self.price_total.set("Total: $" + "%.2f" % (boot_price + tie_price + clasp_price))
 
         if self.select_list.curselection() or cancel:
             self.scroll_window.destroy()
@@ -95,7 +98,7 @@ class SnootbootGUI:
             the_string = ''
             for i in [1, 2, 3, 4, 8, 6]:
                 if i==6:
-                    the_string += "$" + str(item[i]) + '   '
+                    the_string += "$" + "%.2f" % item[i] + '   '
                 elif i==2:
                     if table_name == 'Tie':
                         the_string += str(item[i]) + '"' + '   '
@@ -129,11 +132,44 @@ class SnootbootGUI:
         Button(self.scroll_window, text="Select", command=self.set_selection).pack(side=LEFT, expand=1)
         Button(self.scroll_window, text="Cancel", command=lambda: self.set_selection(True)).pack(side=RIGHT, expand=1)
 
+    def reset_components(self):
+
+        adjust = 0
+        
+        for category in self.FINDER:
+
+            category[0].delete(0, END)
+            category[0].insert(0, "Name")
+            if category[-1] == 'boot':
+                self.VAR_LIST[adjust].set("Shape")
+            elif category[-1] == 'tie':
+                self.VAR_LIST[adjust].set("Length")
+            elif category[-1] == 'clasp':
+                self.VAR_LIST[adjust].set("Type")
+            self.VAR_LIST[adjust+1].set("Material")
+            self.VAR_LIST[adjust+2].set("Color")
+            self.VAR_LIST[adjust+3].set("Manufacturer")
+            category[5].delete(0, END)
+            category[5].insert(0, "Min Price")
+            category[6].delete(0, END)
+            category[6].insert(0, "Max Price")
+
+            adjust += 4
+
+        self.snootboot_name.delete(0, END)
+        self._boot_selection = None
+        self._tie_selection = None
+        self._clasp_selection = None
+        self.boot_selection.set("Boot: None Selected")
+        self.tie_selection.set("Tie: None Selected")
+        self.clasp_selection.set("Clasp: None Selected")
+        self.price_total.set("Total: $0.00")
+
+
     def _create_components(self):
 
         row = 0
-        any = "ALL"
-        arrow_image = PhotoImage(file='arrow1.gif')
+        any_att = "ALL"
 
         Label(self.frame, text="Snootboot Name:  ").grid(row=row, column=0, columnspan=2, sticky=N+S+E)
         self.snootboot_name = Entry(self.frame)
@@ -145,7 +181,7 @@ class SnootbootGUI:
 
             Label(self.frame, text="Find A "+comp_list[-1].title()+": ").grid(row=row, column=0)
 
-            # Input Label for Name
+            # Input box for Name
             text = comp_list[0]
             comp_list[0] = Entry(self.frame)
             comp_list[0].insert(0, text.title())
@@ -154,30 +190,30 @@ class SnootbootGUI:
             # Dropdowns for Shape, Length, Type
             text = comp_list[1][0]
             options = [list(i)[0] for i in sorted(comp_list[1][1]())]
-            options[:0] = [any]
+            options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
+            self.VAR_LIST.append(variable)
             comp_list[1] = apply(OptionMenu, (self.frame, variable) + tuple(options))
             comp_list[1].grid(row=row, column=2, sticky=N+S+E+W)
-            # comp_list[1].config(compound='right', image=arrow_image, width=140)
-            # comp_list[1].image=arrow_image
-            # print comp_list[1]
 
             # Dropdowns for Material
             text = comp_list[2]
             options = [list(i)[0] for i in sorted(query_library.get_materials(comp_list[-1]))]
-            options[:0] = [any]
+            options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
+            self.VAR_LIST.append(variable)
             comp_list[2] = apply(OptionMenu, (self.frame, variable) + tuple(options))
             comp_list[2].grid(row=row, column=3, sticky=N+S+E+W)
 
             # Dropdowns for Color
             text = comp_list[3]
             options = [list(i)[0] for i in sorted(query_library.get_colors(comp_list[-1]))]
-            options[:0] = [any]
+            options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
+            self.VAR_LIST.append(variable)
             comp_list[3] = apply(OptionMenu, (self.frame, variable) + tuple(options))
             comp_list[3].grid(row=row, column=4, sticky=N+S+E+W)
 
@@ -186,9 +222,10 @@ class SnootbootGUI:
             # Dropdowns for MFG
             text = comp_list[4]
             options = [list(i)[0] for i in sorted(query_library.get_mfgs(comp_list[-1]))]
-            options[:0] = [any]
+            options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
+            self.VAR_LIST.append(variable)
             comp_list[4] = apply(OptionMenu, (self.frame, variable) + tuple(options))
             comp_list[4].grid(row=row, column=1, sticky=N+S+E+W)
 
@@ -220,3 +257,6 @@ class SnootbootGUI:
         row += 1
         Label(self.frame, textvariable=self.price_total).grid(row=row, columnspan=10)
         row += 1
+        Button(self.frame, text="New Boot", command=self.reset_components).grid(row=row, column=1, sticky=E)
+        Button(self.frame, text="View My Boots").grid(row=row, column=2)
+        Button(self.frame, text="Save Boot").grid(row=row, column=3, sticky=W)

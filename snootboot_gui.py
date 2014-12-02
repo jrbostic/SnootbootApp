@@ -22,12 +22,74 @@ class SnootbootGUI:
         self.root['bg'] = '#656565'
         self.frame = Frame(self.root)
 
+        self.results = None
+        self.scroll_window = None
+        self. select_list = None
+
+        self._boot_selection = None
+        self._tie_selection = None
+        self._clasp_selection = None
+
+        self.boot_selection = StringVar()
+        self.boot_selection.set("Boot: None Selected")
+        self.tie_selection = StringVar()
+        self.tie_selection.set("Tie: None Selected")
+        self.clasp_selection = StringVar()
+        self.clasp_selection.set("Clasp: None Selected")
+        self.price_total = StringVar()
+        self.price_total.set("Total: $0.00")
+
         self._create_components()
 
         self.frame.pack()
         self.root.mainloop()
 
+    def set_selection(self, cancel=False):
+
+        def toString(item, cat):
+            the_string = ''
+            for i in [1, 2, 3, 4, 8, 6]:
+                if i==6:
+                    the_string += "$" + str(item[i]) + '   '
+                elif i==2:
+                    if cat == 'Ties':
+                        the_string += str(item[i]) + '"' + '   '
+                    else:
+                        the_string += str(item[i]) + '   '
+                elif i==8:
+                    the_string += item[i] + " (" + item[10] + ", " + item[11] + ")   "
+                else:
+                    the_string += item[i] + '   '
+            return the_string
+
+        if not cancel and self.select_list.curselection() and self.select_list:
+            index = int(self.select_list.curselection()[0])
+            item = self.results[index]
+            category = item[-3]
+            if category == 'Boots':
+                self._boot_selection = item
+                self.boot_selection.set(toString(self._boot_selection, category)) #category + ": " + str(item))
+            elif category == "Ties":
+                self._tie_selection = item
+                self.tie_selection.set(toString(self._tie_selection, category))
+            elif category == "Clasps":
+                self._clasp_selection = item
+                self.clasp_selection.set(toString(self._clasp_selection, category))
+            else:
+                print "something weird is happening!"
+
+            boot_price = 0.00 if self._boot_selection is None else self._boot_selection[6]
+            tie_price = 0.00 if self._tie_selection is None else self._tie_selection[6]
+            clasp_price = 0.00 if self._clasp_selection is None else self._clasp_selection[6]
+
+            self.price_total.set("Total: $" + str(boot_price + tie_price + clasp_price))
+
+        if self.select_list.curselection() or cancel:
+            self.scroll_window.destroy()
+
     def create_res_window(self, results, table_name):
+
+        self.results = results
 
         def toString(item):
             the_string = ''
@@ -45,10 +107,10 @@ class SnootbootGUI:
                     the_string += item[i] + '   '
             return the_string
 
-        scroll_window = Toplevel(self.frame)
-        scroll_window.geometry("%dx%d%+d%+d" % (500, 200, self.frame.winfo_rootx()+10, self.frame.winfo_rooty()))
+        self.scroll_window = Toplevel(self.frame)
+        self.scroll_window.geometry("%dx%d%+d%+d" % (500, 200, self.frame.winfo_rootx()+10, self.frame.winfo_rooty()))
 
-        inner_window = Frame(scroll_window)
+        inner_window = Frame(self.scroll_window)
         inner_window.pack(fill=BOTH)
 
         scrollbar = Scrollbar(inner_window, orient=VERTICAL)
@@ -64,9 +126,8 @@ class SnootbootGUI:
         self.select_list.pack(side=LEFT, fill=BOTH, expand=1)
 
         #currently destroy window... need to return/set selection
-        Button(scroll_window, text="Select", command=scroll_window.destroy).pack(side=LEFT, expand=1)
-        Button(scroll_window, text="Cancel", command=scroll_window.destroy).pack(side=RIGHT, expand=1)
-
+        Button(self.scroll_window, text="Select", command=self.set_selection).pack(side=LEFT, expand=1)
+        Button(self.scroll_window, text="Cancel", command=lambda: self.set_selection(True)).pack(side=RIGHT, expand=1)
 
     def _create_components(self):
 
@@ -150,3 +211,12 @@ class SnootbootGUI:
                                                  clist=comp_list: self.create_res_window(query_library.action(name, clist), name))
             comp_list[7].grid(row=row, column=4, sticky=N+S+E+W)
             row += 1
+
+        Label(self.frame, textvariable=self.boot_selection).grid(row=row, columnspan=10)
+        row += 1
+        Label(self.frame, textvariable=self.tie_selection).grid(row=row, columnspan=10)
+        row += 1
+        Label(self.frame, textvariable=self.clasp_selection).grid(row=row, columnspan=10)
+        row += 1
+        Label(self.frame, textvariable=self.price_total).grid(row=row, columnspan=10)
+        row += 1

@@ -104,9 +104,7 @@ def action(name, comp_list):
         query += " WHERE "
     else:
         #query db here for ANY
-        print(query)
         res = find(query)
-        print(res)
         return res
 
     # build the statement
@@ -154,9 +152,10 @@ def action(name, comp_list):
             # error here don't query
             print(max)
             return max
-    print(query)
+
+    #print(query)
     res = find(query)
-    print(res)
+    #print(res)
     return res
 
 @connection

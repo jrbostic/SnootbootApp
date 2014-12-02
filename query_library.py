@@ -189,7 +189,18 @@ def get_mfgs(table):
     table = table.upper() + 'S'
     return "SELECT DISTINCT MFGS.Name FROM ("+table+" JOIN MFGS ON Mfg = MFGS.ID)"
 
+@connection
+def insert_snoot(table):
+    return 'INSERT INTO SNOOTBOOTS (Name, Boot, Tie, Clasp, Price) VALUES ' \
+           '("{}", {}, {}, {}, {})'.format(table[0], table[1], table[2], table[3], table[4])
 
+@connection
+def get_snoots():
+    return "SELECT * FROM SNOOTBOOTS"
+
+@connection
+def del_snoot(id):
+    return "DELETE FROM SNOOTBOOTS WHERE ID="+str(id)
 
 # EXAMPLE DB CALL W/O DECORATOR
 #

@@ -1,10 +1,16 @@
+"""
+Script that connects with a database 'Snootboots' and populates randomized
+boot accessories.  The number of items generated/inserted can be set using the
+NUM_OF_ITEMS constant near top of file.  Does not reset database on execution.
+"""
+
 import MySQLdb
 import random
 
 __author__ = 'jessebostic'
 
-# Holds all of the possibly string values for creating random items
-# Integers should be dynamically created with random module upon insertion
+# Holds all of the possible string values for creating random items
+# Integers are dynamically created with random module upon insertion
 db_values = {"name_adjectives": ["Ugly", "Cheap", "Elegant", "Unique", "Used", "Gorgeous", "Plain", "Barbed", "Smooth",
                                  "Brilliant", "Awesome", "Basic", "Aquatic", "Cool", "Sexy", "Gawdy", "Gorgeous",
                                  "New",  "Antique", "Steampunk", "Coveted", "Rugged", "Durable", "Quality", "Stylish",
@@ -84,20 +90,3 @@ for x in range(NUM_OF_ITEMS):
 
 cur.close()
 db.close()
-
-
-
-#OPEN CONNECTION AND CURSOR
-# db = MySQLdb.connect(host="50.62.209.116", port=3306, user="TCSS_445", passwd="L3mm31N!", db="Snootboots")
-# cur = db.cursor()
-
-# cur.execute("INSERT INTO SNOOTBOOTS (Name) VALUES ('A Special Boot')")
-#
-# cur.execute("SELECT * FROM SNOOTBOOTS")
-#
-# for row in cur.fetchall():
-#     print row
-
-#CLOSE CONNECTION AND CURSOR
-# cur.close()
-# db.close()

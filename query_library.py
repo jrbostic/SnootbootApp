@@ -86,14 +86,12 @@ def action(name, comp_list):
             return False
 
     query = "SELECT * FROM (" + name.upper() + "S" + " JOIN MFGS ON Mfg = MFGS.ID)"
-    # Name entry
+
     text = comp_list[0].get()
     if text == "Name" or text == "":
         text = ""
     else:
-        # Two cases, names containing text OR names == text
         text = name.upper() + "S.Name LIKE " + "'%" + text + "%'"
-        #text = name.upper() + "S.Name=" + "'" + text + "'"
 
     # Dropdown values
     drop1 = comp_list[1].cget("text")

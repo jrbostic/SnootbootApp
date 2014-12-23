@@ -1,5 +1,8 @@
 """
 A library of functions that act as a way to interface with the database.
+
+***DATABASE CONNECTION PARAMETERS ARE PLACEHOLDERS***
+
 """
 
 import MySQLdb
@@ -13,7 +16,9 @@ def open_conn():
 
     :return: (connection, cursor)
     """
-    db = MySQLdb.connect(host="50.62.209.116", port=3306, user="TCSS_445", passwd="L3mm31N!", db="Snootboots")
+
+    # UPDATE WITH DESIRED SERVER, USER, AND PASSWORD
+    db = MySQLdb.connect(host="12.34.567.890", port=3306, user="YourUSER", passwd="YourPSSWD", db="Snootboots")
     cur = db.cursor()
     return db, cur
 

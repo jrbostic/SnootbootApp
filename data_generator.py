@@ -2,6 +2,9 @@
 Script that connects with a database 'Snootboots' and populates randomized
 boot accessories.  The number of items generated/inserted can be set using the
 NUM_OF_ITEMS constant near top of file.  Does not reset database on execution.
+
+***DATABASE CONNECTION PARAMETERS ARE PLACEHOLDERS***
+
 """
 
 import MySQLdb
@@ -30,7 +33,8 @@ db_values = {"name_adjectives": ["Ugly", "Cheap", "Elegant", "Unique", "Used", "
 # How many items of each type to generate.
 NUM_OF_ITEMS = 15
 
-db = MySQLdb.connect(host="50.62.209.116", port=3306, user="TCSS_445", passwd="L3mm31N!", db="Snootboots")
+# UPDATE WITH DESIRED SERVER, USER, AND PASSWORD
+db = MySQLdb.connect(host="12.34.567.890", port=3306, user="YourUSER", passwd="YourPSSWD", db="Snootboots")
 cur = db.cursor()
 
 #INSERT MFGS

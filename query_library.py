@@ -1,3 +1,7 @@
+"""
+A library of functions that act as a way to interface with the database.
+"""
+
 import MySQLdb
 
 __author__ = 'jesse bostic'
@@ -5,19 +9,41 @@ __author__ = 'nick ames'
 
 
 def open_conn():
+    """Opens a new database connection, and gives back connection and cursor references.
+
+    :return: (connection, cursor)
+    """
     db = MySQLdb.connect(host="50.62.209.116", port=3306, user="TCSS_445", passwd="L3mm31N!", db="Snootboots")
     cur = db.cursor()
     return db, cur
 
 
 def close_conn(db, cur):
+    """Takes a database connection and cursor and closes them.
+
+    :param db: database connection to close
+    :param cur: cursor to close
+    :return None
+    """
     db.close()
     cur.close()
 
-def connection(query_func):
-    """Decorator takes query function and returns result."""
 
-    def doit(table=None):
+def connection(query_func):
+    """Decorator takes query function and returns result.
+    Queries should be functions returning valid SQL strings
+    that can be directly executed.
+
+    :param query_func: the passed in function
+    :return: result of the database query
+    """
+
+    def execute_query(table=None):
+        """Executes database queries.
+
+        :param table: optional decorator client parameter
+        :return: result of the query
+        """
         db, cur = open_conn()
         if table is None:
             cur.execute(query_func())
@@ -25,15 +51,29 @@ def connection(query_func):
             cur.execute(query_func(table))
         result = cur.fetchall()
         close_conn(db, cur)
+
         return result
 
-    return doit
+    return execute_query
+
 
 def action(name, comp_list):
-    """Finds what button was pressed and queries based on boot, tie or clasp"""
+    """Finds what button was pressed and queries based on boot, tie or clasp
+
+    This could probably use the decorator by passing single tuple as parameter.
+    Shadows some builtins.  Works.
+
+    :param name: name of table
+    :param comp_list: list of components
+    :return: results of database query
+    """
 
     def valid_price(p):
-        """Tests if a price is a valid number"""
+        """Tests if a price is a valid number
+
+        :param p price entered by user
+        :return boolean - true if float, false otherwise
+        """
         try:
             float(p)
             return True
@@ -158,59 +198,108 @@ def action(name, comp_list):
     #print(res)
     return res
 
+
 @connection
 def find(statement):
+    """Takes string SQL statement, executes, returns result.
+    Support for action function above.
+
+    :param statement: valid SQL query string
+    :return: result of database query
+    """
     return statement
+
 
 @connection
 def get_boot_shapes():
+    """Get a list of boot shapes.
+
+    :return: list of tuples containing boot shapes
+    """
     return "SELECT DISTINCT Shape FROM BOOTS"
+
 
 @connection
 def get_tie_lengths():
+    """Get a list of tie lengths.
+
+    :return: list of tuples containing tie lengths
+    """
     return "SELECT DISTINCT Length FROM TIES"
+
 
 @connection
 def get_clasp_types():
+    """Get a list of clasp types
+
+    :return: list of tuples containing clasp types
+    """
     return "SELECT DISTINCT Type FROM CLASPS"
+
 
 @connection
 def get_materials(table):
+    """Get available materials by specified table.
+
+    :param table: table to find materials in
+    :return: list of tuples containing materials
+    """
     table = table.upper() + 'S'
     return "SELECT DISTINCT Material FROM " + table
 
+
 @connection
 def get_colors(table):
+    """Get available colors by specified table.
+
+    :param table: table to find colors in
+    :return: list of tuples containing colors
+    """
     table = table.upper() + 'S'
     return "SELECT DISTINCT Color FROM " + table
 
+
 @connection
 def get_mfgs(table):
+    """Get available manufacturers by specified table.
+
+    :param table: table to find manufacturers in
+    :return: list of tuples containing manufacturers
+    """
     table = table.upper() + 'S'
     return "SELECT DISTINCT MFGS.Name FROM ("+table+" JOIN MFGS ON Mfg = MFGS.ID)"
 
+
 @connection
 def insert_snoot(table):
+    """Inserts a completed snootboot into main table.
+
+    :param table: the snootboot data to add
+    :return: None
+    """
     return 'INSERT INTO SNOOTBOOTS (Name, Boot, Tie, Clasp, Price) VALUES ' \
            '("{}", {}, {}, {}, {})'.format(table[0], table[1], table[2], table[3], table[4])
 
+
 @connection
 def get_snoots():
+    """Gets all saved snootboots from main table.
+
+    :return: list of tuples representing saved snootboots
+    """
     return "SELECT * FROM SNOOTBOOTS"
+
 
 @connection
 def del_snoot(id):
+    """Deletes snootboot from main table ID key.
+
+    :param id: the id number of snootboot to delete
+    :return: None
+    """
     return "DELETE FROM SNOOTBOOTS WHERE ID="+str(id)
 
-# EXAMPLE DB CALL W/O DECORATOR
-#
-# def get_boot_mfgs():
-#
-#     db, cur = open_conn()
-#     cur.execute("SELECT DISTINCT MFGS.Name FROM (BOOTS JOIN MFGS ON Mfg = MFGS.ID)")
-#     result = cur.fetchall()
-#     close_conn(db, cur)
-#     return result
+
 
 
 

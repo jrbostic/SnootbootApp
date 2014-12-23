@@ -241,7 +241,7 @@ class SnootbootGUI:
 
             # Dropdowns for Shape, Length, Type
             text = comp_list[1][0]
-            options = [list(i)[0] for i in sorted(comp_list[1][1]())]
+            options = [i[0] for i in sorted(comp_list[1][1]())]
             options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
@@ -251,7 +251,7 @@ class SnootbootGUI:
 
             # Dropdowns for Material
             text = comp_list[2]
-            options = [list(i)[0] for i in sorted(query_library.get_materials(comp_list[-1]))]
+            options = [i[0] for i in sorted(query_library.get_materials(comp_list[-1]))]
             options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
@@ -261,7 +261,7 @@ class SnootbootGUI:
 
             # Dropdowns for Color
             text = comp_list[3]
-            options = [list(i)[0] for i in sorted(query_library.get_colors(comp_list[-1]))]
+            options = [i[0] for i in sorted(query_library.get_colors(comp_list[-1]))]
             options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
@@ -273,7 +273,7 @@ class SnootbootGUI:
 
             # Dropdowns for MFG
             text = comp_list[4]
-            options = [list(i)[0] for i in sorted(query_library.get_mfgs(comp_list[-1]))]
+            options = [i[0] for i in sorted(query_library.get_mfgs(comp_list[-1]))]
             options[:0] = [any_att]
             variable = StringVar(self.frame)
             variable.set(text.title())
